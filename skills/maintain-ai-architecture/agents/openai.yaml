@@ -1,4 +1,0 @@
-interface:
-  display_name: "Maintain AI Architecture"
-  short_description: "Audit and improve persistent agent architecture"
-  default_prompt: "Audit this repository’s persistent AI architecture, preserve protected design context, and propose the smallest high-confidence improvements."

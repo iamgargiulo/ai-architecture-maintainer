@@ -202,7 +202,7 @@ def audit(root: Path) -> dict:
             skill_name, description = parse_frontmatter(text)
             haystack = " ".join(filter(None, (rel, skill_name, description))).lower()
             design_related = (
-                skill_name != "maintain-ai-architecture"
+                skill_name != "ai-arch-maintainer"
                 and any(hint in haystack for hint in DESIGN_SKILL_HINTS)
             )
             skills.append(

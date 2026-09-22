@@ -1,13 +1,15 @@
 ---
-name: maintain-ai-architecture
+name: ai-arch-maintainer
 description: Audit, design, and maintain a repository's persistent AI-agent architecture across Claude Code, Codex, Cursor, and Agent Skills. Use when reviewing or changing CLAUDE.md, AGENTS.md, .cursor/rules, nested instructions, skills, subagents, hooks, permissions, AI-facing documentation, or when deciding where durable session learnings belong. Preserve design-system sources of truth such as DESIGN.md and PRODUCT.md, especially when ui-craft, impeccable, taste, or similar design skills are installed. Do not use for ordinary feature work unless the user asks to persist new agent guidance or audit the repository's AI configuration.
 ---
 
-# Maintain AI Architecture
+# AI Architecture Maintainer
 
 Maintain the smallest, highest-signal set of persistent instructions that materially improves future agent behavior. Treat persistent context as production infrastructure, not a session log.
 
 ## Operating modes
+
+Use `/ai-arch-maintainer` in Claude Code or Cursor, and `$ai-arch-maintainer` in Codex. Interpret the following request text as the mode: bare invocation or `audit` means Audit; `propose` means Propose; `apply` means Apply. These are natural-language instructions, not Python CLI flags.
 
 Infer the mode from the request:
 

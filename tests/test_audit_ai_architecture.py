@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPT = ROOT / "skills" / "maintain-ai-architecture" / "scripts" / "audit_ai_architecture.py"
+SCRIPT = ROOT / "skills" / "ai-arch-maintainer" / "scripts" / "audit_ai_architecture.py"
 SPEC = importlib.util.spec_from_file_location("audit_ai_architecture", SCRIPT)
 MODULE = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None
@@ -64,7 +64,7 @@ class AuditAiArchitectureTest(unittest.TestCase):
             self.assertNotIn("missing-product-source", codes)
 
     def test_maintainer_skill_does_not_detect_itself_as_design_skill(self) -> None:
-        report = MODULE.audit(ROOT / "skills" / "maintain-ai-architecture")
+        report = MODULE.audit(ROOT / "skills" / "ai-arch-maintainer")
         self.assertEqual(report["design_persistence"]["recognized_design_skills"], [])
 
     def test_missing_frontmatter_is_reported(self) -> None:

@@ -1,97 +1,170 @@
+<div align="center">
+
 # AI Architecture Maintainer
 
-A portable Agent Skill for auditing and maintaining the persistent AI architecture of a software repository.
+### Give every instruction a purpose. Give every decision a home.
 
-It decides whether durable knowledge belongs in always-on instructions, scoped rules, skills, agents, deterministic enforcement, normal documentation, protected design artifacts, local preferences, or nowhere. The objective is not to document everything an agent learns; it is to preserve only information that materially improves future decisions.
+**One skill for maintaining the context your coding agents carry forward.**
 
-## What it audits
+[Quick start](#quick-start) · [How it works](#how-it-works) · [Design persistence](#design-persistence) · [Inside the repo](#inside-the-repo)
 
-- `CLAUDE.md`, `AGENTS.md`, and Cursor project rules
-- nested and path-scoped instructions
-- Agent Skills and supporting references/scripts
-- agents, hooks, settings, permissions, and CI enforcement
-- stale, duplicated, contradictory, or oversized persistent context
-- session learnings and user corrections that may deserve persistence
-- design/product sources of truth such as `DESIGN.md` and `PRODUCT.md`
+`Claude Code` · `Codex` · `Cursor` · `MIT`
 
-The default mode is read-only. It reports proposed changes, rejected candidates, ambiguities, protected artifacts, and a diff. It edits only when explicitly asked to apply changes.
+</div>
 
-## Design persistence
+---
 
-The skill interoperates with external design skills rather than bundling them:
+Your repository evolves. Its agent instructions should evolve with it.
 
-- [UI Craft](https://github.com/educlopez/ui-craft)
-- [Impeccable](https://github.com/pbakaus/impeccable)
-- [Taste Skill](https://github.com/Leonxlnx/taste-skill)
+**`/ai-arch-maintainer`** reviews persistent instructions, finds stale or conflicting guidance, and proposes the smallest useful change. It covers root instructions, scoped rules, skills, agents, hooks, permissions, and the design context that needs to survive the next session.
 
-When one of these—or a semantically equivalent design skill—is installed, the audit treats `DESIGN.md` as a required persistent authoring source unless the project explicitly declares a different canonical path. It also preserves `PRODUCT.md` and surface briefs when an installed workflow consumes them.
+**Audit by default. Apply when requested. Preserve authored design intent.**
 
-This is deliberate: design intent is an input to future generation and evaluation, not disposable documentation merely because current code reflects it.
+## Quick start
 
-## Install
-
-Use the Agent Skills installer and select Claude Code, Codex, Cursor, or any combination offered by the installer:
+Install with the [Agent Skills CLI](https://github.com/vercel-labs/skills), selecting your coding agent when prompted:
 
 ```bash
 npx skills@latest add iamgargiulo/ai-architecture-maintainer
 ```
 
-Or install the skill folder manually:
+In Claude Code or Cursor, invoke:
 
-| Host | Project location |
+```text
+/ai-arch-maintainer
+```
+
+In Codex CLI or the IDE extension, invoke:
+
+```text
+$ai-arch-maintainer
+```
+
+The workflow is shared; invocation syntax belongs to the host. See the official [Claude Code](https://code.claude.com/docs/en/skills), [Cursor](https://cursor.com/docs/skills), and [Codex](https://learn.chatgpt.com/docs/build-skills) documentation.
+
+<details>
+<summary><strong>Manual installation and upgrades</strong></summary>
+
+Copy the complete `skills/ai-arch-maintainer/` folder into the location for your host:
+
+| Host | Project installation |
 |---|---|
-| Claude Code | `.claude/skills/maintain-ai-architecture/` |
-| Codex | `.agents/skills/maintain-ai-architecture/` |
-| Cursor | Use Cursor's current Agent Skills location or the installer above |
+| Claude Code | `.claude/skills/ai-arch-maintainer/` |
+| Codex | `.agents/skills/ai-arch-maintainer/` |
+| Cursor | `.cursor/skills/ai-arch-maintainer/` |
 
-The canonical portable skill is in [`skills/maintain-ai-architecture`](skills/maintain-ai-architecture).
+Keep `SKILL.md`, `references/`, `scripts/`, and `agents/` together. Python 3.10+ is needed only for the optional inventory scanner.
 
-## Use
+**Upgrading from `maintain-ai-architecture`?** Install the renamed skill, then remove the previous installed folder after preserving any local customizations. Keep only one active copy per host. The repository name remains `ai-architecture-maintainer`.
 
-Explicit invocation depends on the host. Typical requests include:
+</details>
+
+## Three ways to use it
+
+| Mode | Request | Result |
+|---|---|---|
+| **Audit** | `/ai-arch-maintainer` | Inspect the architecture and report findings. No edits. |
+| **Propose** | `/ai-arch-maintainer propose` | Show justified changes and an exact diff. No edits. |
+| **Apply** | `/ai-arch-maintainer apply` | Apply verified, minimal improvements and check the result. |
+
+These are instructions interpreted by the skill, not flags for the Python scanner. In Codex, use `$ai-arch-maintainer` with the same request text. Changes to permissions, hooks, or CI require an explicit request for those changes.
+
+For a session wrap-up:
 
 ```text
-Audit this repository's persistent AI architecture. Do not edit files.
+/ai-arch-maintainer propose
+Review this session's corrections and discoveries. Keep only durable,
+verified guidance that changes future decisions. Preserve DESIGN.md
+and the artifact contracts of installed design skills.
 ```
 
-```text
-Review what we learned in this session and propose only the durable,
-non-obvious guidance worth persisting. Show the diff but do not apply it.
-```
+## How it works
 
-```text
-Apply the approved AI-architecture changes and verify that DESIGN.md,
-PRODUCT.md, and installed design-skill contracts remain intact.
-```
+### 01 — Discover
 
-## Read-only inventory
+Read existing guidance, inspect relevant code, and identify which hosts and design workflows the project actually uses.
 
-The bundled scanner inventories supported agent configuration and protected artifacts without modifying the repository:
+### 02 — Decide
+
+Evaluate durability, reuse, non-obviousness, impact, and verification. The normal persistence threshold is **8/10**—a review heuristic, not a performance benchmark. Verification and non-duplication still matter independently of the score.
+
+### 03 — Route
+
+| What you learned | Where it belongs |
+|---|---|
+| A repository-wide invariant | Root agent instructions |
+| A subsystem constraint | Nested instructions or scoped rules |
+| A reusable procedure | A skill |
+| An isolated investigation workflow | An agent, when justified |
+| A mechanically checkable requirement | A hook, script, or CI check |
+| An access restriction | Host permissions or policy |
+| Detailed technical knowledge | Documentation loaded when needed |
+| Authored design or product intent | `DESIGN.md`, `PRODUCT.md`, or the declared canonical source |
+| A personal preference | User-local configuration |
+| Temporary status or cheap discovery | No new persistent instruction |
+
+### 04 — Refine
+
+Update, consolidate, relocate, or remove existing guidance before adding more. Keep an explicit record of candidates rejected from persistence and ambiguities that need evidence.
+
+## Design persistence
+
+**Your design system is an authoring input.** The skill treats it as persistent project context, even when the current implementation reflects the same decisions.
+
+| External design workflow | What this maintainer preserves |
+|---|---|
+| [UI Craft](https://github.com/educlopez/ui-craft) | Project design context and declared sources of truth |
+| [Impeccable](https://github.com/pbakaus/impeccable) | `DESIGN.md`, plus `PRODUCT.md` and surface briefs when consumed |
+| [Taste](https://github.com/Leonxlnx/taste-skill) | Curated or generated design intent, including `DESIGN.md` |
+
+These dependencies remain external. The maintainer reads the installed version's contract; it does not bundle or rewrite third-party skills.
+
+When a recognized design workflow is present, the skill checks for `DESIGN.md` or an explicitly declared alternative. Missing context becomes a finding. It does not invent brand colors, typography, or product decisions to fill the gap.
+
+## What you get back
+
+- **Proposed changes:** file, action, evidence, score, and behavioral justification.
+- **Protected artifacts:** design/product sources, consumers, and missing inputs.
+- **Rejected candidates:** what should stay out of persistent context, and why.
+- **Ambiguities:** contradictions that cannot be resolved from current evidence.
+- **Diff:** a concrete patch for review, or a summary of applied changes and checks.
+
+## Inside the repo
+
+| File | Purpose |
+|---|---|
+| [SKILL.md](skills/ai-arch-maintainer/SKILL.md) | Core maintenance workflow |
+| [Routing matrix](skills/ai-arch-maintainer/references/routing-matrix.md) | Choose the right destination for each instruction |
+| [Platform map](skills/ai-arch-maintainer/references/platform-map.md) | Host-specific placement and shared context |
+| [Design persistence](skills/ai-arch-maintainer/references/design-persistence.md) | Preserve design and product sources of truth |
+| [Inventory scanner](skills/ai-arch-maintainer/scripts/audit_ai_architecture.py) | Read-only structural inventory, Markdown or JSON |
+| [Tests](tests/test_audit_ai_architecture.py) | Scanner regression tests |
+
+<details>
+<summary><strong>Run the inventory scanner</strong></summary>
 
 ```bash
-python3 skills/maintain-ai-architecture/scripts/audit_ai_architecture.py \
+python3 skills/ai-arch-maintainer/scripts/audit_ai_architecture.py \
   --root /path/to/repository \
   --format markdown
 ```
 
-JSON output is also available with `--format json`.
+Use `--format json` for structured output. The scanner supplies evidence for the audit; it is not a full secret scanner or a security certification.
 
-## Maintenance model
+**Current limitation:** use it on trusted repositories. It reads files beyond the configuration inventory, follows file symlinks, and includes the root path and skill metadata in JSON output. Review reports before sharing them.
 
-Each candidate instruction is scored across durability, reuse, non-obviousness, impact, and verification. Normal candidates should score at least 8/10 and also be non-duplicative. Safety, data-integrity, and protected-authoring constraints receive separate consideration.
-
-The skill prefers updating, consolidating, moving, or removing existing guidance before adding new persistent context.
+</details>
 
 ## Development
-
-Run the test suite:
 
 ```bash
 python3 -m unittest discover -s tests -v
 ```
 
-Validate the skill with the validator provided by your Agent Skills host before publishing changes.
+Run the tests locally with Python 3.10+. Runtime invocation should also be checked in each target host after installation; unit tests cover the scanner, not live agent behavior.
 
-## License
+Contributions should make the workflow clearer, improve a concrete decision, or correct a verified compatibility issue. Keep references focused and preserve the design-persistence contract.
 
-MIT
+---
+
+Built by [Alessandro Gargiulo](https://github.com/iamgargiulo). Released under the [MIT License](LICENSE).
