@@ -1,15 +1,15 @@
 ---
-name: ai-arch-maintainer
-description: Audit, design, and maintain a repository's persistent AI-agent architecture across Claude Code, Codex, Cursor, and Agent Skills. Use when reviewing or changing CLAUDE.md, AGENTS.md, .cursor/rules, nested instructions, skills, subagents, hooks, permissions, AI-facing documentation, or when deciding where durable session learnings belong. Preserve design-system sources of truth such as DESIGN.md and PRODUCT.md, especially when ui-craft, impeccable, taste, or similar design skills are installed. Do not use for ordinary feature work unless the user asks to persist new agent guidance or audit the repository's AI configuration.
+name: ai-arch
+description: Use when reviewing or changing a repository's persistent AI-agent architecture across Claude Code, Codex, Cursor, and Agent Skills, including CLAUDE.md, AGENTS.md, .cursor/rules, nested instructions, skills, subagents, hooks, permissions, durable session learnings, Karpathy coding guidance, or design context such as DESIGN.md and PRODUCT.md. Do not use for ordinary feature work unless the user asks to persist agent guidance or audit AI configuration.
 ---
 
-# AI Architecture Maintainer
+# AI Arch
 
 Maintain the smallest, highest-signal set of persistent instructions that materially improves future agent behavior. Treat persistent context as production infrastructure, not a session log.
 
 ## Operating modes
 
-Use `/ai-arch-maintainer` in Claude Code or Cursor, and `$ai-arch-maintainer` in Codex. Interpret the following request text as the mode: bare invocation or `audit` means Audit; `propose` means Propose; `apply` means Apply. These are natural-language instructions, not Python CLI flags.
+Use `/ai-arch` in Claude Code or Cursor, and `$ai-arch` in Codex. Interpret the following request text as the mode: bare invocation or `audit` means Audit; `propose` means Propose; `apply` means Apply. These are natural-language instructions, not Python CLI flags.
 
 Infer the mode from the request:
 
@@ -40,7 +40,15 @@ Do not turn an audit or review request into edits. Do not apply hooks, permissio
 
 Read [references/platform-map.md](references/platform-map.md) when more than one agent host is present or when adding/moving configuration between hosts.
 
-### 2. Protect authoring sources of truth
+### 2. Ensure the Karpathy baseline
+
+On every run, read [references/karpathy-guidelines.md](references/karpathy-guidelines.md), follow its four principles during maintenance, and check their coverage in the project's always-on instructions.
+
+Treat this baseline as required guidance, even when there are no session learnings. It is an explicit exception to the non-obviousness and impact thresholds for normal candidates in step 5; do not reject it merely as generic advice. Equivalent existing guidance satisfies the requirement.
+
+In Audit or Propose mode, show the exact diff for missing coverage without writing. In Apply mode, merge only missing guidance into the active hosts' instructions. Preserve existing equivalent wording, project rules, and explicit user overrides. Do not create configuration for unused hosts or duplicate a baseline already loaded through a shared source.
+
+### 3. Protect authoring sources of truth
 
 Before pruning documentation, inspect the inventory's **Design persistence** section and read [references/design-persistence.md](references/design-persistence.md).
 
@@ -54,7 +62,7 @@ When `ui-craft`, `impeccable`, `taste`, `stitch-design-taste`, or a semantically
 - do not edit managed third-party skill files; change local adapters or project artifacts instead;
 - report a missing required artifact as a gap, not as permission to invent its contents.
 
-### 3. Classify every candidate
+### 4. Classify every candidate
 
 Assign each candidate to exactly one destination. Use [references/routing-matrix.md](references/routing-matrix.md) for host-specific placement.
 
@@ -73,7 +81,7 @@ The destination may be a root instruction file, nested instruction/rule, skill, 
 
 Do not force host-specific mechanisms into a repository that does not use that host. When multiple hosts coexist, preserve one semantic rule and keep adapters minimal; do not create divergent copies silently.
 
-### 4. Apply the persistence test
+### 5. Apply the persistence test
 
 Persist a normal candidate only when all are true:
 
@@ -89,7 +97,7 @@ Use this 0-2 heuristic: durability, reuse, non-obviousness, impact, verification
 
 Prefer the generalized rule behind a repeated mistake, not the story of the mistake.
 
-### 5. Audit existing architecture, not only additions
+### 6. Audit existing architecture, not only additions
 
 Evaluate every relevant existing instruction for truth, durability, scope, actionability, duplication, contradiction, discoverability, and token cost.
 
@@ -106,7 +114,7 @@ Keep root always-on files intentionally small. Treat 200 lines as an audit warni
 
 Never persist secrets, credentials, tokens, session IDs, volatile URLs, or environment values. Reference environment-variable names only when necessary.
 
-### 6. Resolve conflicts conservatively
+### 7. Resolve conflicts conservatively
 
 When instructions conflict with code, tests, schemas, configuration, installed skill contracts, or explicit user direction:
 
@@ -117,13 +125,17 @@ When instructions conflict with code, tests, schemas, configuration, installed s
 
 Do not let a generic cleanup rule override a specialized installed skill's explicit artifact contract.
 
-### 7. Produce the maintenance report
+### 8. Produce the maintenance report
 
 Use these sections:
 
 #### Proposed changes
 
 For each change include target file, action (`ADD`, `UPDATE`, `MOVE`, `CONSOLIDATE`, `REMOVE`, or `ENFORCE`), exact concept, persistence score, and one-sentence behavioral justification.
+
+#### Karpathy baseline
+
+For each of the four principles, report coverage (`present`, `partial`, `missing`, or `overridden`), the instruction path that supplies it, and the proposed or applied action. Mark required baseline additions as `required baseline` instead of inventing a persistence score.
 
 #### Protected artifacts
 
@@ -141,16 +153,18 @@ List contradictions and missing evidence. Do not resolve them by assumption.
 
 In Audit or Propose mode, show the proposed diff and stop. In Apply mode, apply only the smallest justified change.
 
-### 8. Verify applied changes
+### 9. Verify applied changes
 
 After edits:
 
 1. rerun the inventory script;
 2. validate modified skill folders with the host's validator when available;
 3. run only relevant repository checks;
-4. confirm protected artifacts remain present and referenced correctly;
+4. confirm protected artifacts remain present and referenced correctly, and all four Karpathy principles are covered or explicitly overridden;
 5. inspect the final diff for unrelated changes, duplicated rules, secrets, and stale adapters;
 6. report what changed, why it deserves persistence, what was consolidated or removed, and any remaining ambiguity.
+
+For the baseline, verify that a second run would make no additional changes and that each active host actually loads the guidance. Use the bundled reference offline; no external skill installation or network fetch is required.
 
 ## Final decision filter
 

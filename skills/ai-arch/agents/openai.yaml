@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Arch"
+  short_description: "Audit and improve persistent agent architecture"
+  default_prompt: "Use $ai-arch to audit this repository’s persistent AI architecture, check the Karpathy coding baseline, preserve protected design context, and propose the smallest high-confidence improvements."

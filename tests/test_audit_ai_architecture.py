@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPT = ROOT / "skills" / "ai-arch-maintainer" / "scripts" / "audit_ai_architecture.py"
+SCRIPT = ROOT / "skills" / "ai-arch" / "scripts" / "audit_ai_architecture.py"
 SPEC = importlib.util.spec_from_file_location("audit_ai_architecture", SCRIPT)
 MODULE = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None
@@ -63,9 +63,28 @@ class AuditAiArchitectureTest(unittest.TestCase):
             self.assertNotIn("missing-design-source", codes)
             self.assertNotIn("missing-product-source", codes)
 
-    def test_maintainer_skill_does_not_detect_itself_as_design_skill(self) -> None:
-        report = MODULE.audit(ROOT / "skills" / "ai-arch-maintainer")
+    def test_ai_arch_does_not_detect_itself_as_design_skill(self) -> None:
+        report = MODULE.audit(ROOT / "skills" / "ai-arch")
+        self.assertEqual([skill["name"] for skill in report["skills"]], ["ai-arch"])
         self.assertEqual(report["design_persistence"]["recognized_design_skills"], [])
+
+    def test_architecture_skill_names_do_not_require_design_sources(self) -> None:
+        for name in ("ai-arch", "ai-arch-maintainer"):
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                self.write(
+                    root,
+                    f".agents/skills/{name}/SKILL.md",
+                    f"---\nname: {name}\ndescription: Maintain guidance for ui-craft and impeccable.\n---\n",
+                )
+
+                report = MODULE.audit(root)
+
+                self.assertEqual(report["design_persistence"]["recognized_design_skills"], [])
+                self.assertNotIn(
+                    "missing-design-source",
+                    {warning["code"] for warning in report["warnings"]},
+                )
 
     def test_missing_frontmatter_is_reported(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

@@ -1,12 +1,12 @@
 <div align="center">
 
-# AI Architecture Maintainer
+# AI Arch
 
 ### Give every instruction a purpose. Give every decision a home.
 
 **One skill for maintaining the context your coding agents carry forward.**
 
-[Quick start](#quick-start) · [How it works](#how-it-works) · [Design persistence](#design-persistence) · [Inside the repo](#inside-the-repo)
+[Quick start](#quick-start) · [How it works](#how-it-works) · [Karpathy baseline](#karpathy-baseline) · [Design persistence](#design-persistence) · [Inside the repo](#inside-the-repo)
 
 `Claude Code` · `Codex` · `Cursor` · `MIT`
 
@@ -16,7 +16,7 @@
 
 Your repository evolves. Its agent instructions should evolve with it.
 
-**`/ai-arch-maintainer`** reviews persistent instructions, finds stale or conflicting guidance, and proposes the smallest useful change. It covers root instructions, scoped rules, skills, agents, hooks, permissions, and the design context that needs to survive the next session.
+**`/ai-arch`** reviews persistent instructions, checks the Karpathy coding baseline, finds stale or conflicting guidance, and proposes the smallest useful change. It covers root instructions, scoped rules, skills, agents, hooks, permissions, and the design context that needs to survive the next session.
 
 **Audit by default. Apply when requested. Preserve authored design intent.**
 
@@ -31,13 +31,13 @@ npx skills@latest add iamgargiulo/ai-architecture-maintainer
 In Claude Code or Cursor, invoke:
 
 ```text
-/ai-arch-maintainer
+/ai-arch
 ```
 
 In Codex CLI or the IDE extension, invoke:
 
 ```text
-$ai-arch-maintainer
+$ai-arch
 ```
 
 The workflow is shared; invocation syntax belongs to the host. See the official [Claude Code](https://code.claude.com/docs/en/skills), [Cursor](https://cursor.com/docs/skills), and [Codex](https://learn.chatgpt.com/docs/build-skills) documentation.
@@ -45,17 +45,17 @@ The workflow is shared; invocation syntax belongs to the host. See the official 
 <details>
 <summary><strong>Manual installation and upgrades</strong></summary>
 
-Copy the complete `skills/ai-arch-maintainer/` folder into the location for your host:
+Copy the complete `skills/ai-arch/` folder into the location for your host:
 
 | Host | Project installation |
 |---|---|
-| Claude Code | `.claude/skills/ai-arch-maintainer/` |
-| Codex | `.agents/skills/ai-arch-maintainer/` |
-| Cursor | `.cursor/skills/ai-arch-maintainer/` |
+| Claude Code | `.claude/skills/ai-arch/` |
+| Codex | `.agents/skills/ai-arch/` |
+| Cursor | `.cursor/skills/ai-arch/` |
 
 Keep `SKILL.md`, `references/`, `scripts/`, and `agents/` together. Python 3.10+ is needed only for the optional inventory scanner.
 
-**Upgrading from `maintain-ai-architecture`?** Install the renamed skill, then remove the previous installed folder after preserving any local customizations. Keep only one active copy per host. The repository name remains `ai-architecture-maintainer`.
+**Upgrading from `ai-arch-maintainer` or `maintain-ai-architecture`?** Install `ai-arch`, then remove the previous installed folder after preserving any local customizations. Update saved invocations to `/ai-arch` or `$ai-arch` and keep only one active copy per host. The repository name remains `ai-architecture-maintainer`.
 
 </details>
 
@@ -63,16 +63,16 @@ Keep `SKILL.md`, `references/`, `scripts/`, and `agents/` together. Python 3.10+
 
 | Mode | Request | Result |
 |---|---|---|
-| **Audit** | `/ai-arch-maintainer` | Inspect the architecture and report findings. No edits. |
-| **Propose** | `/ai-arch-maintainer propose` | Show justified changes and an exact diff. No edits. |
-| **Apply** | `/ai-arch-maintainer apply` | Apply verified, minimal improvements and check the result. |
+| **Audit** | `/ai-arch` | Inspect the architecture and report findings. No edits. |
+| **Propose** | `/ai-arch propose` | Show justified changes and an exact diff. No edits. |
+| **Apply** | `/ai-arch apply` | Apply verified, minimal improvements and check the result. |
 
-These are instructions interpreted by the skill, not flags for the Python scanner. In Codex, use `$ai-arch-maintainer` with the same request text. Changes to permissions, hooks, or CI require an explicit request for those changes.
+These are instructions interpreted by the skill, not flags for the Python scanner. In Codex, use `$ai-arch` with the same request text. Changes to permissions, hooks, or CI require an explicit request for those changes.
 
 For a session wrap-up:
 
 ```text
-/ai-arch-maintainer propose
+/ai-arch propose
 Review this session's corrections and discoveries. Keep only durable,
 verified guidance that changes future decisions. Preserve DESIGN.md
 and the artifact contracts of installed design skills.
@@ -107,6 +107,19 @@ Evaluate durability, reuse, non-obviousness, impact, and verification. The norma
 
 Update, consolidate, relocate, or remove existing guidance before adding more. Keep an explicit record of candidates rejected from persistence and ambiguities that need evidence.
 
+## Karpathy baseline
+
+Every run checks whether the project's always-on instructions cover the four principles from [Karpathy Guidelines](https://github.com/multica-ai/andrej-karpathy-skills):
+
+- Make assumptions and tradeoffs visible before editing.
+- Choose the simplest solution that satisfies the request.
+- Keep changes focused and preserve unrelated work.
+- Define success criteria and verify the outcome.
+
+The [bundled reference](skills/ai-arch/references/karpathy-guidelines.md) supplies the guidance without requiring a separate plugin or network access. The baseline is required even in a new project with no session learnings; the normal persistence score applies to other candidate instructions.
+
+In **Audit** and **Propose**, missing guidance appears as an exact diff. In **Apply**, the skill merges missing guidance into `AGENTS.md`, `CLAUDE.md`, or an always-applied Cursor rule for the hosts actually used by the project. Equivalent existing rules satisfy the check; partial coverage receives only the missing details. Explicit overrides are preserved and reported. Repeating Apply should produce no additional baseline changes.
+
 ## Design persistence
 
 **Your design system is an authoring input.** The skill treats it as persistent project context, even when the current implementation reflects the same decisions.
@@ -124,6 +137,7 @@ When a recognized design workflow is present, the skill checks for `DESIGN.md` o
 ## What you get back
 
 - **Proposed changes:** file, action, evidence, score, and behavioral justification.
+- **Karpathy baseline:** coverage and instruction path for each principle, with proposed or applied additions marked as required baseline.
 - **Protected artifacts:** design/product sources, consumers, and missing inputs.
 - **Rejected candidates:** what should stay out of persistent context, and why.
 - **Ambiguities:** contradictions that cannot be resolved from current evidence.
@@ -133,18 +147,19 @@ When a recognized design workflow is present, the skill checks for `DESIGN.md` o
 
 | File | Purpose |
 |---|---|
-| [SKILL.md](skills/ai-arch-maintainer/SKILL.md) | Core maintenance workflow |
-| [Routing matrix](skills/ai-arch-maintainer/references/routing-matrix.md) | Choose the right destination for each instruction |
-| [Platform map](skills/ai-arch-maintainer/references/platform-map.md) | Host-specific placement and shared context |
-| [Design persistence](skills/ai-arch-maintainer/references/design-persistence.md) | Preserve design and product sources of truth |
-| [Inventory scanner](skills/ai-arch-maintainer/scripts/audit_ai_architecture.py) | Read-only structural inventory, Markdown or JSON |
+| [SKILL.md](skills/ai-arch/SKILL.md) | Core maintenance workflow |
+| [Karpathy baseline](skills/ai-arch/references/karpathy-guidelines.md) | Coding principles and rules for merging missing coverage |
+| [Routing matrix](skills/ai-arch/references/routing-matrix.md) | Choose the right destination for each instruction |
+| [Platform map](skills/ai-arch/references/platform-map.md) | Host-specific placement and shared context |
+| [Design persistence](skills/ai-arch/references/design-persistence.md) | Preserve design and product sources of truth |
+| [Inventory scanner](skills/ai-arch/scripts/audit_ai_architecture.py) | Read-only structural inventory, Markdown or JSON |
 | [Tests](tests/test_audit_ai_architecture.py) | Scanner regression tests |
 
 <details>
 <summary><strong>Run the inventory scanner</strong></summary>
 
 ```bash
-python3 skills/ai-arch-maintainer/scripts/audit_ai_architecture.py \
+python3 skills/ai-arch/scripts/audit_ai_architecture.py \
   --root /path/to/repository \
   --format markdown
 ```
